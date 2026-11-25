@@ -22,7 +22,7 @@ and the buyer's seat map stays empty without it.
 On pretix:
 
 ```bash
-pip install git+https://github.com/sentry-i-am/seatmap-pro-seating.git
+pip install seatmap-pro-seating
 python -m pretix migrate
 python -m pretix rebuild
 ```
@@ -30,7 +30,7 @@ python -m pretix rebuild
 On eventyay:
 
 ```bash
-pip install git+https://github.com/sentry-i-am/seatmap-pro-seating.git
+pip install seatmap-pro-seating
 python -m eventyay migrate
 python -m eventyay rebuild
 ```
