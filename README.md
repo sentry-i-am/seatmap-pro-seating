@@ -4,8 +4,8 @@ This plugin lets buyers pick seats on a [Seatmap Pro](https://seatmap.pro) venue
 Prices, reservations, the cart, and orders stay in your ticketing system. Seatmap Pro supplies the venue
 drawing and the map the buyer clicks on.
 
-**Status:** early version. Tested on eventyay `dev` (commit `75ce5f9`). pretix support uses the same code
-and is not verified yet.
+**Status:** early version. The test suite passes on pretix 2026.9.3 and on eventyay `dev` (commit `75ce5f9`).
+A buyer has completed seat selection in a browser on eventyay. The same browser check on pretix is still open.
 
 ## What you need
 
@@ -15,11 +15,31 @@ and is not verified yet.
 
 ## Install
 
+Install the package into the Python environment of your pretix or eventyay server. Then run the host's
+`migrate` and `rebuild` commands. `rebuild` copies the plugin's `frame.js` into the collected static files,
+and the buyer's seat map stays empty without it.
+
+On pretix:
+
 ```bash
 pip install git+https://github.com/sentry-i-am/seatmap-pro-seating.git
+python -m pretix migrate
+python -m pretix rebuild
+```
+
+On eventyay:
+
+```bash
+pip install git+https://github.com/sentry-i-am/seatmap-pro-seating.git
+python -m eventyay migrate
+python -m eventyay rebuild
 ```
 
 Restart the web and worker processes. Then enable **Seatmap Pro** in the plugin list of your event.
+
+If you run pretix or eventyay from a Docker image, the image collects static files at build time. Build
+your own image on top of the official one that installs the plugin, then rebuilds the static files. On the
+pretix image, that step is `cd /pretix/src && make production`.
 
 ## Set up an event
 
@@ -35,8 +55,9 @@ removes a seat that is already sold.
 
 ## What the buyer sees
 
-When a buyer opens the page for choosing seats, the plugin loads the Seatmap Pro renderer and shows the venue. Only seats that are free in
-your ticketing system can be selected, and they show the price of the mapped product. The selected seats
+The host shows the seat map on the event front page, on the voucher page, and in the separate window for
+choosing seats. There the plugin loads the Seatmap Pro renderer and shows the venue. Only seats that are
+free in your ticketing system can be selected, and they show the price of the mapped product. The selected seats
 go to the cart through the standard seat fields, so availability checks, quotas, and checkout work as usual.
 
 The organization token stays on your server. The browser receives only the public key and the event ID.
@@ -46,8 +67,10 @@ The organization token stays on your server. The browser receives only the publi
 - The renderer is the published npm package `@seatmap.pro/renderer`, version 1.75.0. The page loads it
   from `cdn.jsdelivr.net`.
 - The renderer reads the venue from the Seatmap Pro public API.
-- On the page for choosing seats, the plugin extends the Content Security Policy with these hosts and allows
-  images over `https:` for the venue background.
+- On pages that show the map, the plugin adds these hosts to the Content Security Policy and allows images
+  over `https:` for the venue background.
+- The plugin writes connection changes and loaded plans to the event log. The organization token is never
+  written to the log.
 
 ## Limitations
 
@@ -56,6 +79,10 @@ The organization token stays on your server. The browser receives only the publi
 - Standing areas from Seatmap Pro are not imported.
 - The price on the map is the product's default price. Vouchers apply in the cart.
 
+## Security
+
+Report security issues to support@seatmap.pro and do not open a public issue for them.
+
 ## Development
 
 ```bash
@@ -63,8 +90,17 @@ pip install -e .
 pytest tests/test_layout.py
 ```
 
-`tests/host/test_host_flow.py` runs the full flow inside the host's own test suite: copy it into the
-host's tests directory and run it there.
+`tests/host/test_host_flow.py` runs the full flow inside a host: settings, import, seat map, cart, and
+permission checks. To run it on pretix, install pretix, `pytest-django`, and `beautifulsoup4` next to the
+plugin:
+
+```bash
+pytest tests --ds=pretix.testutils.settings
+```
+
+To run it on eventyay, use the eventyay environment and its test settings, `tests.testutils.settings`.
+
+Set `SEATING_PLAN_SCHEMA` to the host's `seating-plan.schema.json` to check the generated plan against it.
 
 ## License
 

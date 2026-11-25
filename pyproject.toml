@@ -34,5 +34,16 @@ seatmap_pro = ["templates/seatmap_pro/*.html", "static/seatmap_pro/*.js", "local
 [tool.ruff]
 line-length = 120
 
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["seatmap_pro"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+known_first_party = ["seatmap_pro"]
+
 [tool.ruff.format]
 quote-style = "single"

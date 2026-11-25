@@ -13,13 +13,21 @@ class _Meta:
     visible = True
 
 
+class PretixMeta(_Meta):
+    # pretix reads one requirement string here. eventyay reads a list, so it gets its own class.
+    compatibility = 'pretix>=2026.9.0'
+    settings_links = [
+        ((_('Seatmap Pro'),), 'plugins:seatmap_pro:settings', {}),
+    ]
+
+
 class SeatmapProApp(AppConfig):
     name = 'seatmap_pro'
     verbose_name = 'Seatmap Pro'
     default = True
 
-    PretixPluginMeta = _Meta
+    PretixPluginMeta = PretixMeta
     EventyayPluginMeta = _Meta
 
     def ready(self):
-        from . import signals  # noqa: F401
+        from . import logs, signals  # noqa: F401

@@ -42,10 +42,10 @@ def current_mapping(event):
 
 @transaction.atomic
 def apply_layout(event, organizer, layout, mapping):
-    SeatingPlan = host_attr('base.models', 'SeatingPlan')
+    seating_plan_model = host_attr('base.models', 'SeatingPlan')
     generate_seats = host_attr('base.services.seating', 'generate_seats')
     validate_plan_change = host_attr('base.services.seating', 'validate_plan_change')
-    plan = SeatingPlan(
+    plan = seating_plan_model(
         organizer=organizer,
         name=f'Seatmap Pro: {layout["name"]}'[:190],
         layout=json.dumps(layout),

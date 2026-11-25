@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 import requests
+from django.utils.translation import gettext as _
 
 DEFAULT_API_URL = 'https://booking.seatmap.pro'
 TIMEOUT = 20
@@ -33,9 +34,11 @@ class BookingApi:
         try:
             response = self.session.get(f'{self.api_url}{path}', params=params, headers=headers, timeout=TIMEOUT)
         except requests.RequestException as error:
-            raise SeatmapApiError(f'Seatmap Pro is not reachable: {error}') from error
+            raise SeatmapApiError(_('Seatmap Pro is not reachable: %(error)s') % {'error': error}) from error
         if response.status_code != 200:
-            raise SeatmapApiError(f'Seatmap Pro returned HTTP {response.status_code} for {path}')
+            raise SeatmapApiError(
+                _('Seatmap Pro returned HTTP %(status)s for %(path)s') % {'status': response.status_code, 'path': path}
+            )
         return response.json()
 
     def _pages(self, path):
@@ -54,7 +57,8 @@ class BookingApi:
         return self._get('/api/public/v1.0/event/', {'id': event_id, 'publicKey': self.public_key}, private=False)
 
     def pricing_zones(self, schema_id):
-        return {zone['id']: zone['name'] for zone in self._pages(f'/api/private/v2.0/schemas/{schema_id}/pricing_zones/')}
+        zones = self._pages(f'/api/private/v2.0/schemas/{schema_id}/pricing_zones/')
+        return {zone['id']: zone['name'] for zone in zones}
 
     def sections(self, schema_id):
         return self._get(f'/api/private/v2.0/schemas/{schema_id}/seatmaps/', {'type': 'SECTION'})

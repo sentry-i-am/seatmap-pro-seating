@@ -5,7 +5,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 
 from .booking_api import SeatmapApiError
-from .compat import event_products, host_attr
+from .compat import SETTINGS_PERMISSION, event_products, host_attr
 from .forms import ConnectionForm, MappingForm
 from .importer import (
     SETTING_KEYS,
@@ -16,6 +16,7 @@ from .importer import (
     save_settings,
     setting,
 )
+from .logs import PLAN_SAVED, SETTINGS_CHANGED
 
 EventPermissionRequiredMixin = host_attr('control.permissions', 'EventPermissionRequiredMixin')
 EventSettingsViewMixin = host_attr('control.views.event', 'EventSettingsViewMixin')
@@ -23,7 +24,7 @@ SeatProtected = host_attr('base.services.seating', 'SeatProtected')
 
 
 class SettingsView(EventPermissionRequiredMixin, EventSettingsViewMixin, TemplateView):
-    permission = 'can_change_event_settings'
+    permission = SETTINGS_PERMISSION
     template_name = 'seatmap_pro/settings.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -68,6 +69,11 @@ class SettingsView(EventPermissionRequiredMixin, EventSettingsViewMixin, Templat
         if not form.is_valid():
             return self.render_to_response(self.get_context_data(connection_form=form))
         save_settings(event, form.cleaned_data)
+        event.log_action(
+            SETTINGS_CHANGED,
+            user=request.user,
+            data={key: form.cleaned_data.get(key) for key in SETTING_KEYS if key != 'organization_token'},
+        )
         try:
             layout = fetch_layout(event)
         except (SeatmapApiError, ValueError, KeyError) as error:
@@ -86,9 +92,14 @@ class SettingsView(EventPermissionRequiredMixin, EventSettingsViewMixin, Templat
         if not form.is_valid():
             return self.render_to_response(self.get_context_data(mapping_form=form))
         try:
-            apply_layout(event, self.request.organizer, layout, form.mapping())
+            plan = apply_layout(event, self.request.organizer, layout, form.mapping())
         except SeatProtected as error:
             messages.error(self.request, str(error))
             return redirect(self.request.path)
+        event.log_action(
+            PLAN_SAVED,
+            user=self.request.user,
+            data={'seating_plan': plan.pk, 'seatmap_event_id': setting(event, 'event_id')},
+        )
         messages.success(self.request, _('The seating plan is saved.'))
         return redirect(self.request.path)
