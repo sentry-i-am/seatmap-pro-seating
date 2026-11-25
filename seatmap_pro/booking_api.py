@@ -1,15 +1,39 @@
+import os
 from dataclasses import dataclass
+from urllib.parse import urlsplit
 
 import requests
 from django.utils.translation import gettext as _
 
 DEFAULT_API_URL = 'https://booking.seatmap.pro'
+# A server administrator lists extra Booking API hosts here, for example an on-premise installation.
+# Organizers cannot add hosts, so the plugin never sends the organization token to an address they choose.
+ALLOWED_HOSTS_VARIABLE = 'SEATMAP_PRO_ALLOWED_API_HOSTS'
 TIMEOUT = 20
 PAGE_SIZE = 200
 
 
 class SeatmapApiError(Exception):
     pass
+
+
+def allowed_api_hosts():
+    extra = os.environ.get(ALLOWED_HOSTS_VARIABLE, '')
+    return {urlsplit(DEFAULT_API_URL).netloc, *(host.strip().lower() for host in extra.split(',') if host.strip())}
+
+
+def checked_api_url(api_url):
+    """Return the API address without a trailing slash, or raise ValueError if the server does not allow it."""
+    url = (api_url or DEFAULT_API_URL).strip().rstrip('/')
+    parts = urlsplit(url)
+    if parts.scheme != 'https' or parts.username or parts.password or parts.query or parts.fragment:
+        raise ValueError(_('The Booking API address must be a plain https:// address.'))
+    if parts.netloc.lower() not in allowed_api_hosts():
+        raise ValueError(
+            _('The server administrator has not allowed %(host)s. Add it to %(variable)s.')
+            % {'host': parts.netloc, 'variable': ALLOWED_HOSTS_VARIABLE}
+        )
+    return f'https://{parts.netloc.lower()}{parts.path}'
 
 
 @dataclass(frozen=True)
@@ -22,7 +46,7 @@ class Venue:
 
 class BookingApi:
     def __init__(self, api_url, organization_token, public_key, session=None):
-        self.api_url = (api_url or DEFAULT_API_URL).rstrip('/')
+        self.api_url = checked_api_url(api_url)
         self.organization_token = organization_token
         self.public_key = public_key
         self.session = session or requests.Session()
@@ -32,7 +56,9 @@ class BookingApi:
         if private:
             headers['X-API-Key'] = self.organization_token
         try:
-            response = self.session.get(f'{self.api_url}{path}', params=params, headers=headers, timeout=TIMEOUT)
+            response = self.session.get(
+                f'{self.api_url}{path}', params=params, headers=headers, timeout=TIMEOUT, allow_redirects=False
+            )
         except requests.RequestException as error:
             raise SeatmapApiError(_('Seatmap Pro is not reachable: %(error)s') % {'error': error}) from error
         if response.status_code != 200:

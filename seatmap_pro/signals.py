@@ -5,6 +5,7 @@ from django.template.loader import get_template
 from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
 
+from .booking_api import DEFAULT_API_URL, checked_api_url
 from .compat import SETTINGS_PERMISSION, host_attr, sales_channel_identifier
 from .importer import setting
 from .layout import seat_id_from_guid
@@ -48,7 +49,10 @@ def available_seats(event, request, voucher):
 
 
 def api_origin(event):
-    parts = urlsplit(setting(event, 'api_url') or 'https://booking.seatmap.pro')
+    try:
+        parts = urlsplit(checked_api_url(setting(event, 'api_url')))
+    except ValueError:
+        parts = urlsplit(DEFAULT_API_URL)
     return f'{parts.scheme}://{parts.netloc}'
 
 
@@ -91,8 +95,12 @@ def merge_csp(header, additions):
         if words:
             current = policy.setdefault(words[0], [])
             current.extend(value for value in words[1:] if value not in current)
+    fallback = policy.get('default-src', [])
     for name, values in additions.items():
-        current = policy.setdefault(name, [])
+        # A new directive replaces default-src for its resource type, so it starts from the default-src sources.
+        current = policy.setdefault(name, [value for value in fallback if value != "'none'"])
+        if "'none'" in current:
+            current.remove("'none'")
         current.extend(value for value in values if value not in current)
     return '; '.join(f'{name} {" ".join(values)}' for name, values in policy.items() if values)
 

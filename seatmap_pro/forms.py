@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .booking_api import DEFAULT_API_URL
+from .booking_api import DEFAULT_API_URL, checked_api_url
 
 
 class ConnectionForm(forms.Form):
@@ -22,6 +22,12 @@ class ConnectionForm(forms.Form):
     def __init__(self, *args, token_saved=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.token_saved = token_saved
+
+    def clean_api_url(self):
+        try:
+            return checked_api_url(self.cleaned_data['api_url'])
+        except ValueError as error:
+            raise forms.ValidationError(str(error)) from error
 
     def clean_organization_token(self):
         token = self.cleaned_data['organization_token'].strip()

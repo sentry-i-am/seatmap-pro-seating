@@ -71,6 +71,10 @@ The organization token stays on your server. The browser receives only the publi
   over `https:` for the venue background.
 - The plugin writes connection changes and loaded plans to the event log. The organization token is never
   written to the log.
+- The server sends the organization token only to `booking.seatmap.pro` over HTTPS and does not follow
+  redirects. If you run Seatmap Pro on premise, the server administrator lists its Booking API host in the
+  `SEATMAP_PRO_ALLOWED_API_HOSTS` environment variable, for example
+  `SEATMAP_PRO_ALLOWED_API_HOSTS=seatmap.example.com`. Organizers can choose only from these hosts.
 
 ## Limitations
 
