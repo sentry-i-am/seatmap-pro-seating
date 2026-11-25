@@ -82,6 +82,7 @@ The organization token stays on your server. The browser receives only the publi
 - Products with variations cannot be mapped to a pricing zone.
 - Standing areas from Seatmap Pro are not imported.
 - The price on the map is the product's default price. Vouchers apply in the cart.
+- The plugin's own texts are in English and German.
 
 ## Security
 

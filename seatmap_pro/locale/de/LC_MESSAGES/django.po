@@ -1,0 +1,152 @@
+# German translation of the Seatmap Pro seating plugin.
+# This file is distributed under the same license as the seatmap-pro-seating package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: seatmap-pro-seating\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-25 21:37+0000\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Seatmap Pro\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps.py signals.py
+msgid "Seatmap Pro"
+msgstr "Seatmap Pro"
+
+#: apps.py
+msgid "Seat selection on Seatmap Pro venue maps."
+msgstr "Sitzplatzauswahl auf Saalplänen von Seatmap Pro."
+
+#: booking_api.py
+msgid "The Booking API address must be a plain https:// address."
+msgstr "Die Adresse der Booking API muss eine einfache https://-Adresse sein."
+
+#: booking_api.py
+#, python-format
+msgid ""
+"The server administrator has not allowed %(host)s. Add it to %(variable)s."
+msgstr ""
+"Der Serveradministrator hat %(host)s nicht freigegeben. Tragen Sie den Host "
+"in %(variable)s ein."
+
+#: booking_api.py
+#, python-format
+msgid "Seatmap Pro is not reachable: %(error)s"
+msgstr "Seatmap Pro ist nicht erreichbar: %(error)s"
+
+#: booking_api.py
+#, python-format
+msgid "Seatmap Pro returned HTTP %(status)s for %(path)s"
+msgstr "Seatmap Pro hat für %(path)s HTTP %(status)s zurückgegeben"
+
+#: forms.py
+msgid "Booking API address"
+msgstr "Adresse der Booking API"
+
+#: forms.py
+msgid "Change it only for an on-premise Seatmap Pro installation."
+msgstr "Nur für eine selbst betriebene Installation von Seatmap Pro ändern."
+
+#: forms.py
+msgid "Organization token"
+msgstr "Organisations-Token"
+
+#: forms.py
+msgid "Stays on this server. Leave empty to keep the saved token."
+msgstr ""
+"Bleibt auf diesem Server. Leer lassen, um das gespeicherte Token zu behalten."
+
+#: forms.py
+msgid "Public key"
+msgstr "Öffentlicher Schlüssel"
+
+#: forms.py
+msgid "Seatmap Pro event ID"
+msgstr "Veranstaltungs-ID in Seatmap Pro"
+
+#: forms.py
+msgid "Enter the organization token."
+msgstr "Geben Sie das Organisations-Token ein."
+
+#: forms.py
+msgid "Not for sale"
+msgstr "Nicht im Verkauf"
+
+#: logs.py
+msgid "The Seatmap Pro connection settings were changed."
+msgstr "Die Verbindungseinstellungen für Seatmap Pro wurden geändert."
+
+#: logs.py
+msgid "The seating plan was loaded from Seatmap Pro."
+msgstr "Der Sitzplan wurde aus Seatmap Pro geladen."
+
+#: signals.py
+#, python-brace-format
+msgid "Selected seats: {count}, total {total}"
+msgstr "Ausgewählte Plätze: {count}, gesamt {total}"
+
+#: templates/seatmap_pro/frame.html
+msgid "Add to cart"
+msgstr "In den Warenkorb"
+
+#: templates/seatmap_pro/settings.html
+msgid ""
+"Draw the venue in Seatmap Pro, publish the event there, then load it here. "
+"Prices, reservations and orders stay in this system."
+msgstr ""
+"Zeichnen Sie den Saal in Seatmap Pro, veröffentlichen Sie dort die "
+"Veranstaltung und laden Sie sie dann hier. Preise, Reservierungen und "
+"Bestellungen bleiben in diesem System."
+
+#: templates/seatmap_pro/settings.html
+#, python-format
+msgid "Current plan: %(name)s, %(count)s seats."
+msgstr "Aktueller Plan: %(name)s, %(count)s Plätze."
+
+#: templates/seatmap_pro/settings.html
+msgid "Connection"
+msgstr "Verbindung"
+
+#: templates/seatmap_pro/settings.html
+msgid "Load venue"
+msgstr "Saal laden"
+
+#: templates/seatmap_pro/settings.html
+msgid "Pricing zones and products"
+msgstr "Preiszonen und Produkte"
+
+#: templates/seatmap_pro/settings.html
+msgid ""
+"Each Seatmap Pro pricing zone becomes a seat category. Choose the product "
+"sold for it."
+msgstr ""
+"Jede Preiszone aus Seatmap Pro wird zu einer Sitzplatzkategorie. Wählen Sie "
+"das Produkt, das dafür verkauft wird."
+
+#: templates/seatmap_pro/settings.html
+msgid "Save seating plan"
+msgstr "Sitzplan speichern"
+
+#: views.py
+msgid "Event series are not supported yet."
+msgstr "Veranstaltungsreihen werden noch nicht unterstützt."
+
+#: views.py
+#, python-format
+msgid "The venue could not be loaded: %(error)s"
+msgstr "Der Saal konnte nicht geladen werden: %(error)s"
+
+#: views.py
+#, python-format
+msgid "Loaded %(count)s seats. Assign a product to each category."
+msgstr "%(count)s Plätze geladen. Ordnen Sie jeder Kategorie ein Produkt zu."
+
+#: views.py
+msgid "The seating plan is saved."
+msgstr "Der Sitzplan ist gespeichert."
