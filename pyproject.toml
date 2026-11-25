@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seatmap-pro-seating"
+version = "0.1.0"
+description = "Seatmap Pro seating plans for pretix and eventyay"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+dependencies = ["requests>=2.31"]
+authors = [{name = "Seatmap Pro"}]
+keywords = ["pretix", "eventyay", "seating", "seating chart", "seat map", "ticketing"]
+classifiers = [
+  "Framework :: Django",
+  "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+Homepage = "https://seatmap.pro"
+Source = "https://github.com/sentry-i-am/seatmap-pro-seating"
+
+[project.entry-points."pretix.plugin"]
+seatmap_pro = "seatmap_pro"
+
+[tool.setuptools]
+packages = ["seatmap_pro"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+seatmap_pro = ["templates/seatmap_pro/*.html", "static/seatmap_pro/*.js", "locale/*/LC_MESSAGES/*"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+quote-style = "single"

@@ -1,0 +1,12 @@
+{% load i18n %}
+{% load static %}
+<div class="seatmap-pro">
+  <div class="seatmap-pro-map" data-seatmap-pro style="width: 100%; height: 70vh;"></div>
+  <div class="seatmap-pro-selection" data-seatmap-pro-inputs></div>
+  <p class="seatmap-pro-summary" data-seatmap-pro-summary aria-live="polite"></p>
+  <button type="submit" class="btn btn-primary btn-lg" data-seatmap-pro-submit disabled>
+    {% trans "Add to cart" %}
+  </button>
+</div>
+{{ config|json_script:"seatmap-pro-config" }}
+<script type="module" src="{% static 'seatmap_pro/frame.js' %}"></script>

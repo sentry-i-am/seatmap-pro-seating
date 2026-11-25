@@ -1,0 +1,41 @@
+{% extends 'pretixcontrol/event/settings_base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+{% block title %}Seatmap Pro{% endblock %}
+{% block inside %}
+  <h1>Seatmap Pro</h1>
+  <p>
+    {% blocktrans trimmed %}
+      Draw the venue in Seatmap Pro, publish the event there, then load it here.
+      Prices, reservations and orders stay in this system.
+    {% endblocktrans %}
+  </p>
+  {% if plan %}
+    <p>{% blocktrans with name=plan.name count=seat_count %}Current plan: {{ name }}, {{ count }} seats.{% endblocktrans %}</p>
+  {% endif %}
+
+  <form method="post" class="form-horizontal">
+    {% csrf_token %}
+    <fieldset>
+      <legend>{% trans "Connection" %}</legend>
+      {% bootstrap_form connection_form layout="control" %}
+    </fieldset>
+    <div class="form-group submit-group">
+      <button type="submit" name="action" value="load" class="btn btn-primary btn-save">{% trans "Load venue" %}</button>
+    </div>
+  </form>
+
+  {% if mapping_form %}
+    <form method="post" class="form-horizontal">
+      {% csrf_token %}
+      <fieldset>
+        <legend>{% trans "Pricing zones and products" %}</legend>
+        <p>{% trans "Each Seatmap Pro pricing zone becomes a seat category. Choose the product sold for it." %}</p>
+        {% bootstrap_form mapping_form layout="control" %}
+      </fieldset>
+      <div class="form-group submit-group">
+        <button type="submit" name="action" value="apply" class="btn btn-primary btn-save">{% trans "Save seating plan" %}</button>
+      </div>
+    </form>
+  {% endif %}
+{% endblock %}
