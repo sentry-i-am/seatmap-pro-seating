@@ -81,7 +81,7 @@ The organization token stays on your server. The browser receives only the publi
 
 ## Security
 
-Report security issues to support@seatmap.pro and do not open a public issue for them.
+Report security issues to hello@seatmap.pro and do not open a public issue for them.
 
 ## Development
 
