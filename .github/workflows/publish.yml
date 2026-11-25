@@ -25,6 +25,7 @@ jobs:
           test "$TAG" = "v$version"
       - name: Compile translations
         run: |
+          sudo apt-get update -q && sudo apt-get install -y -q gettext
           for po in seatmap_pro/locale/*/LC_MESSAGES/django.po; do
             msgfmt --check -o "${po%.po}.mo" "$po"
           done
